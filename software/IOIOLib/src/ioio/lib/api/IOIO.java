@@ -693,4 +693,15 @@ public interface IOIO {
 	 *             method.
 	 */
 	public void endBatch() throws ConnectionLostException;
+	
+
+	/**
+	 * uJVM - upload classes, initialize, and send input data to micro JVM
+	 * (dynamic java class runtime)
+	 * @throws ConnectionLostException
+	 */
+	public void ujReset() throws ConnectionLostException;
+	public void ujInit() throws ConnectionLostException;
+	public void ujPayload(int numBytes, byte data[]) throws ConnectionLostException;
+	public void ujInput(int numBytes, byte data[]) throws ConnectionLostException;
 }

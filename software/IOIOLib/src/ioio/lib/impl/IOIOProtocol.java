@@ -92,6 +92,11 @@ class IOIOProtocol {
 	static final int SET_PIN_INCAP                       = 0x1C;
 	static final int INCAP_REPORT                        = 0x1C;
 	static final int SOFT_CLOSE                          = 0x1D;
+	static final int UJ_INIT                             = 0x1E;
+	static final int UJ_INPUT                            = 0x1F;
+	static final int UJ_ERROR                            = 0x1F;
+	static final int UJ_PAYLOAD                          = 0x20;
+	static final int UJ_OUTPUT                           = 0x20;
 
 	static final int[] SCALE_DIV = new int[] {
 		0x1F,  // 31.25
@@ -169,7 +174,7 @@ class IOIOProtocol {
 
 	private void writeTwoBytes(int i) throws IOException {
 		writeByte(i & 0xFF);
-		writeByte(i >> 8);
+		writeByte((i >> 8) & 0xFF);
 	}
 
 	private void writeThreeBytes(int i) throws IOException {
@@ -494,6 +499,60 @@ class IOIOProtocol {
 		writeByte(ICSP_REGOUT);
 		endBatch();
 	}
+	
+	synchronized public void ujReset() throws IOException {
+		beginBatch();
+		writeByte(UJ_INIT);
+		writeByte(1);
+		endBatch();
+		Log.e("ujReset:", "DONE");
+	}
+	
+	synchronized public void ujInit() throws IOException {
+		beginBatch();
+		writeByte(UJ_INIT);
+		writeByte(2);
+		endBatch();
+		Log.e("ujInit:", "DONE");
+	}
+	
+	synchronized public void ujPayload(int numBytes, byte data[])
+			throws IOException {
+		int offset=0, size, rest = numBytes;
+		while (rest > 0) {
+			beginBatch(); // FIXME:  outside/inside the while loop ?
+			size = rest > 63 ? 63 : rest;
+			Log.e("PAYLOAD: ", size + ":" + numBytes + ":" + offset);
+			writeByte(UJ_PAYLOAD);
+			writeByte(size - 1);			
+			writeTwoBytes(numBytes);			
+			writeTwoBytes(offset);
+			for (int i=0; i < size; i++) {
+				writeByte(((int) data[offset+i]) & 0xFF);
+			}
+			offset += size;
+			rest -= size;
+			endBatch();
+		}
+		Log.e("ujPayload:", "DONE");
+	}
+	
+	synchronized public void ujInput(int numBytes, byte data[])
+			throws IOException {
+		if (numBytes > 64) {
+			throw new IllegalArgumentException(
+					"A maximum of 64 bytes can be sent in one uartData message. Got: "
+							+ numBytes);
+		}
+		beginBatch();
+		writeByte(UJ_INPUT);
+		writeByte(numBytes - 1);
+		for (int i = 0; i < numBytes; i++) {
+			writeByte(((int) data[i]) & 0xFF);
+		}
+		endBatch();
+	}
+	
 
 	public interface IncomingHandler {
 		public void handleEstablishConnection(byte[] hardwareId,
@@ -557,6 +616,13 @@ class IOIOProtocol {
 		public void handleIncapClose(int incapNum);
 
 		public void handleIncapOpen(int incapNum);
+		
+		public void handleUjInit(boolean result);
+		
+		public void handleUjError(int size, byte[] data);
+		
+		public void handleUjOutput(int size, byte[] data);
+		
 	}
 
 	class IncomingThread extends Thread {
@@ -830,6 +896,21 @@ class IOIOProtocol {
 						Log.d(TAG, "Received soft close.");
 						throw new IOException("Soft close");
 
+					case UJ_INIT:
+						arg1 = readByte();
+						handler_.handleUjInit((arg1 & 0x01) == 1);
+						break;
+						
+					case UJ_ERROR:
+						size = readByte();
+						readBytes(size, data);
+						handler_.handleUjError(size, data);
+						break;
+					case UJ_OUTPUT:
+						size = readByte();
+						readBytes(size, data);
+						handler_.handleUjOutput(size, data);
+						break;
 
 					default:
 						in_.close();

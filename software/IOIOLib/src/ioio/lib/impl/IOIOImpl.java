@@ -717,4 +717,42 @@ public class IOIOImpl implements IOIO, DisconnectListener {
 			throw new ConnectionLostException(e);
 		}
 	}
+	
+	public synchronized void ujReset() throws ConnectionLostException {
+		checkState();
+		try {
+			protocol_.ujReset();
+		} catch (IOException e) {
+			throw new ConnectionLostException(e);
+		}
+	}
+	
+	public synchronized void ujInit() throws ConnectionLostException {
+		checkState();
+		try {
+			protocol_.ujInit();
+		} catch (IOException e) {
+			throw new ConnectionLostException(e);
+		}
+	}
+	
+	public synchronized void ujPayload(int numBytes, byte data[]) throws ConnectionLostException {
+		checkState();
+		try {
+			protocol_.ujPayload(numBytes, data);
+		} catch (IOException e) {
+			throw new ConnectionLostException(e);
+		}
+	}
+	
+	public synchronized void ujInput(int numBytes, byte data[]) throws ConnectionLostException {
+		checkState();
+		try {
+			protocol_.ujInput(numBytes, data);
+		} catch (IOException e) {
+			throw new ConnectionLostException(e);
+		}
+	}
+	
+	
 }

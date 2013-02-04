@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+
+        <ToggleButton
+            android:id="@+id/ToggleButtonA"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="A" android:layout_weight="1"/>
+
+        <ToggleButton
+            android:id="@+id/ToggleButtonB"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="B" android:layout_weight="1"/>
+
+        <ToggleButton
+            android:id="@+id/ToggleButtonC"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="C" android:layout_weight="1"/>
+
+        <ToggleButton
+            android:id="@+id/ToggleButtonD"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="D" android:layout_weight="1"/>
+
+    </LinearLayout>
+
+<TableLayout
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:hapticFeedbackEnabled="true"
+    android:padding="30px" >
+
+    <TableRow
+        android:id="@+id/tableRow1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <ToggleButton
+            android:id="@+id/tbFL"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="ToggleButton" android:padding="20dp"/>
+
+        <ToggleButton
+            android:id="@+id/tbF"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="ToggleButton" android:padding="20dp"/>
+
+        <ToggleButton
+            android:id="@+id/tbFR"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="ToggleButton" android:padding="20dp"/>
+
+    </TableRow>
+
+    <TableRow
+        android:id="@+id/tableRow2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" >
+
+        <ToggleButton
+            android:id="@+id/tbL"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="ToggleButton" android:padding="20dp"/>
+
+        <ToggleButton
+            android:id="@+id/tbO"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="ToggleButton" android:padding="20dp" android:background="@drawable/led_toggle_bg"/>
+
+        <ToggleButton
+            android:id="@+id/tbR"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="ToggleButton" android:padding="20dp"/>
+
+    </TableRow>
+
+    <TableRow
+        android:id="@+id/tableRow3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" >
+
+        <ToggleButton
+            android:id="@+id/tbBL"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="ToggleButton" android:padding="20dp"/>
+
+        <ToggleButton
+            android:id="@+id/tbB"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="ToggleButton" android:padding="20dp"/>
+
+        <ToggleButton
+            android:id="@+id/tbBR"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="ToggleButton" android:padding="20dp"/>
+
+    </TableRow>
+</TableLayout>
+
+</LinearLayout>

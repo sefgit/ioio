@@ -60,6 +60,14 @@ class IncomingState implements IncomingHandler {
 		void reportAdditionalBuffer(int bytesToAdd);
 	}
 
+	interface UjListener {
+		void outputReceived(byte[] data, int size);
+		
+		void errorReceived(byte[] data, int size);
+
+		void initResult(boolean result);
+	}
+	
 	class InputPinState {
 		private Queue<InputPinListener> listeners_ = new ConcurrentLinkedQueue<InputPinListener>();
 		private boolean currentOpen_ = false;
@@ -121,12 +129,53 @@ class IncomingState implements IncomingHandler {
 		}
 	}
 
+	class UjState {
+		private Queue<UjListener> listeners_ = new ConcurrentLinkedQueue<IncomingState.UjListener>();
+		private boolean currentOpen_ = false;
+
+		void pushListener(UjListener listener) {
+			listeners_.add(listener);
+		}
+
+		void closeCurrentListener() {
+			if (currentOpen_) {
+				currentOpen_ = false;
+				listeners_.remove();
+			}
+		}
+
+		void openNextListener() {
+			assert (!listeners_.isEmpty());
+			if (!currentOpen_) {
+				currentOpen_ = true;
+			}
+		}
+
+		void errorReceived(byte[] data, int size) {
+			assert (currentOpen_);
+			listeners_.peek().errorReceived(data, size);
+		}
+
+		void outputReceived(byte[] data, int size) {
+			assert (currentOpen_);
+			listeners_.peek().outputReceived(data, size);
+		}
+		
+		public void initResult(boolean result) {
+			assert (currentOpen_);
+			listeners_.peek().initResult(result);
+		}
+	}
+
+
+
 	private InputPinState[] intputPinStates_;
 	private DataModuleState[] uartStates_;
 	private DataModuleState[] twiStates_;
 	private DataModuleState[] spiStates_;
 	private DataModuleState[] incapStates_;
 	private DataModuleState icspState_;
+	private final UjState uJState_ = new UjState();
 	private final Set<DisconnectListener> disconnectListeners_ = new HashSet<IncomingState.DisconnectListener>();
 	private ConnectionState connection_ = ConnectionState.INIT;
 	public String hardwareId_;
@@ -187,6 +236,10 @@ class IncomingState implements IncomingHandler {
 
 	public void addSpiListener(int spiNum, DataModuleListener listener) {
 		spiStates_[spiNum].pushListener(listener);
+	}
+	
+	public void addUjListener(UjListener listener) {
+		uJState_.pushListener(listener);
 	}
 
 	synchronized public void addDisconnectListener(DisconnectListener listener)
@@ -460,6 +513,24 @@ class IncomingState implements IncomingHandler {
 		}
 	}
 
+	@Override
+	public void handleUjError(int numBytes, byte[] data) {
+		// logMethod("handleUjError", numBytes, data);
+		uJState_.errorReceived(data, numBytes);
+	}
+
+	@Override
+	public void handleUjOutput(int numBytes, byte[] data) {
+		// logMethod("handleUjOutput", numBytes, data);
+		uJState_.outputReceived(data, numBytes);
+	}
+	
+	@Override
+	public void handleUjInit(boolean result) {
+		// logMethod("handleUjOutput", numBytes, data);
+		uJState_.initResult(result);
+	}
+	
 //	private void logMethod(String name, Object... args) {
 //		StringBuffer msg = new StringBuffer(name);
 //		msg.append('(');
