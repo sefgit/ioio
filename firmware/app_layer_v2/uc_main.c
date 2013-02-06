@@ -199,8 +199,8 @@ static UInt8 natUc_msDelay(struct UjThread* t, _UNUSED_ struct UjClass* cls){
 static UInt8 natUC_input(struct UjThread* t, _UNUSED_ struct UjClass* cls){
 // UInt32 input(UInt32 maxsize, BYTE[] data)
     UInt32 res = 0;
-    UInt32 _maxsize = ujThreadPop(t);
     UInt32 _dataptr = ujThreadPop(t);
+    UInt32 _maxsize = ujThreadPop(t);
     uj_input = malloc(_maxsize);
     if (uj_input != NULL) {
         BYTE* _data = ((BYTE*)ujArrayRawAccessStart(_dataptr));
@@ -215,15 +215,15 @@ static UInt8 natUC_input(struct UjThread* t, _UNUSED_ struct UjClass* cls){
 }
 static UInt8 natUC_output(struct UjThread* t, _UNUSED_ struct UjClass* cls){
 // UInt32 input(UInt32 maxsize, BYTE[] data)
-    UInt32 _size = ujThreadPop(t);
     UInt32 _dataptr = ujThreadPop(t);
+    UInt32 _size = ujThreadPop(t);
 // TODO: send multiple bytes / string to app!!!
     return UJ_ERR_NONE;
 }
 static UInt8 natUC_error(struct UjThread* t, _UNUSED_ struct UjClass* cls){
 // UInt32 input(UInt32 maxsize, BYTE[] data)
-    UInt32 _size = ujThreadPop(t);
     UInt32 _dataptr = ujThreadPop(t);
+    UInt32 _size = ujThreadPop(t);
 // TODO: send multiple bytes / string to app!!!
     return UJ_ERR_NONE;
 }
@@ -242,8 +242,9 @@ static UInt8 natUc_toggleLED(struct UjThread* t, _UNUSED_ struct UjClass* cls){
 }
 static UInt8 natUc_SetDigitalOutLevel(struct UjThread* t, _UNUSED_ struct UjClass* cls){
     // void SetDigitalOutLevel(int pin, int value);
-    UInt32 pin = ujThreadPop(t);
+    // NOTE: reverse order of parameters
     UInt32 value = ujThreadPop(t);
+    UInt32 pin = ujThreadPop(t);
     SetDigitalOutLevel(pin, value);
     return UJ_ERR_NONE;
 }
@@ -255,11 +256,10 @@ static UInt8 natUc_SoftReset(struct UjThread* t, _UNUSED_ struct UjClass* cls){
     SoftReset();
     return UJ_ERR_NONE;
 }
-#if 0
 // ADC
 static UInt8 natUc_ADCSetScan(struct UjThread* t, _UNUSED_ struct UjClass* cls){
-    UInt32 pin = ujThreadPop(t);
     UInt32 enable  = ujThreadPop(t);
+    UInt32 pin = ujThreadPop(t);
     ADCSetScan(pin, enable);
     return UJ_ERR_NONE;
 }
@@ -271,65 +271,66 @@ static UInt8 natUc_ADCClrScan(struct UjThread* t, _UNUSED_ struct UjClass* cls){
 }
 // I2C
 static UInt8 natUc_I2CConfigMaster(struct UjThread* t, _UNUSED_ struct UjClass* cls){
-    UInt32 num = ujThreadPop(t);
-    UInt32 rate = ujThreadPop(t);
     UInt32 level = ujThreadPop(t);
+    UInt32 rate = ujThreadPop(t);
+    UInt32 num = ujThreadPop(t);
     I2CConfigMaster(num, rate, level);
     return UJ_ERR_NONE;
 }
 static UInt8 natUc_I2CWriteRead(struct UjThread* t, _UNUSED_ struct UjClass* cls){
-    UInt32 num = ujThreadPop(t);
-    UInt32 adr = ujThreadPop(t);
-    UInt32 dataptr = ujThreadPop(t);
-    UInt32 wrbytes = ujThreadPop(t);
     UInt32 rdbytes = ujThreadPop(t);
+    UInt32 wrbytes = ujThreadPop(t);
+    UInt32 dataptr = ujThreadPop(t);
+    UInt32 adr = ujThreadPop(t);
+    UInt32 num = ujThreadPop(t);
     BYTE* data = ((BYTE*)ujArrayRawAccessStart(dataptr));
     I2CWriteRead(num,adr,data,wrbytes,rdbytes);
     ujArrayRawAccessFinish(dataptr);
     return UJ_ERR_NONE;
 }
-// InCap
-static UInt8 natUc_InCapConfig(struct UjThread* t, _UNUSED_ struct UjClass* cls){
-    UInt32 num = ujThreadPop(t);
-    UInt32 prec = ujThreadPop(t);
-    UInt32 mode = ujThreadPop(t);
-    UInt32 clock = ujThreadPop(t);
-    InCapConfig(num, prec, mode, clock);
-    return UJ_ERR_NONE;
-}
 // PWM
 static UInt8 natUc_SetPwmDutyCycle(struct UjThread* t, _UNUSED_ struct UjClass* cls){
-    UInt32 num = ujThreadPop(t);
-    UInt32 dc = ujThreadPop(t);
     UInt32 fraction = ujThreadPop(t);
+    UInt32 dc = ujThreadPop(t);
+    UInt32 num = ujThreadPop(t);
     SetPwmDutyCycle(num, dc, fraction);
     return UJ_ERR_NONE;
 }
 static UInt8 natUc_SetPwmPeriod(struct UjThread* t, _UNUSED_ struct UjClass* cls){
-    UInt32 num = ujThreadPop(t);
-    UInt32 period = ujThreadPop(t);
     UInt32 scale = ujThreadPop(t);
+    UInt32 period = ujThreadPop(t);
+    UInt32 num = ujThreadPop(t);
     SetPwmPeriod(num, period, scale);
+    return UJ_ERR_NONE;
+}
+#if 0
+// InCap
+static UInt8 natUc_InCapConfig(struct UjThread* t, _UNUSED_ struct UjClass* cls){
+    UInt32 clock = ujThreadPop(t);
+    UInt32 mode = ujThreadPop(t);
+    UInt32 prec = ujThreadPop(t);
+    UInt32 num = ujThreadPop(t);
+    InCapConfig(num, prec, mode, clock);
     return UJ_ERR_NONE;
 }
 // SPI
 static UInt8 natUc_SPIConfigMaster(struct UjThread* t, _UNUSED_ struct UjClass* cls){
-    UInt32 num = ujThreadPop(t);
-    UInt32 scale = ujThreadPop(t);
-    UInt32 div  = ujThreadPop(t);
-    UInt32 end  = ujThreadPop(t);
-    UInt32 edge  = ujThreadPop(t);
     UInt32 pol  = ujThreadPop(t);
+    UInt32 edge  = ujThreadPop(t);
+    UInt32 end  = ujThreadPop(t);
+    UInt32 div  = ujThreadPop(t);
+    UInt32 scale = ujThreadPop(t);
+    UInt32 num = ujThreadPop(t);
     SPIConfigMaster(num, scale, div, end, edge, pol);
     return UJ_ERR_NONE;
 }
 static UInt8 natUc_SPITransmit(struct UjThread* t, _UNUSED_ struct UjClass* cls){
-    UInt32 num = ujThreadPop(t);
-    UInt32 dest = ujThreadPop(t);
-    UInt32 dataptr = ujThreadPop(t);
-    UInt32 data_size = ujThreadPop(t);
-    UInt32 total_size = ujThreadPop(t);
     UInt32 trim_rx = ujThreadPop(t);
+    UInt32 total_size = ujThreadPop(t);
+    UInt32 data_size = ujThreadPop(t);
+    UInt32 dataptr = ujThreadPop(t);
+    UInt32 dest = ujThreadPop(t);
+    UInt32 num = ujThreadPop(t);
     BYTE* data = ((BYTE*)ujArrayRawAccessStart(dataptr));
     SPITransmit(num, dest, data, data_size, total_size, trim_rx);
     ujArrayRawAccessFinish(dataptr);
@@ -337,18 +338,18 @@ static UInt8 natUc_SPITransmit(struct UjThread* t, _UNUSED_ struct UjClass* cls)
 }
 // UART
 static UInt8 natUc_UARTConfig(struct UjThread* t, _UNUSED_ struct UjClass* cls){
-    UInt32 num = ujThreadPop(t);
-    UInt32 rate  = ujThreadPop(t);
-    UInt32 speed4x  = ujThreadPop(t);
-    UInt32 two_stop_bits  = ujThreadPop(t);
     UInt32 parity  = ujThreadPop(t);
+    UInt32 two_stop_bits  = ujThreadPop(t);
+    UInt32 speed4x  = ujThreadPop(t);
+    UInt32 rate  = ujThreadPop(t);
+    UInt32 num = ujThreadPop(t);
     UARTConfig(num, rate, speed4x, two_stop_bits, parity);
     return UJ_ERR_NONE;
 }
 static UInt8 natUc_UARTTransmit(struct UjThread* t, _UNUSED_ struct UjClass* cls){
-    UInt32 num = ujThreadPop(t);
-    UInt32 dataptr = ujThreadPop(t);
     UInt32 size = ujThreadPop(t);
+    UInt32 dataptr = ujThreadPop(t);
+    UInt32 num = ujThreadPop(t);
     BYTE* data = ((BYTE*)ujArrayRawAccessStart(dataptr));
     UARTTransmit(num, data, size);
     ujArrayRawAccessFinish(dataptr);
@@ -371,13 +372,13 @@ const UjNativeClass nativeCls_UC =
                 // digital
                 + 2
                 // ADC
-                //+ 2
+                + 2
                 // I2C
-                //+ 2
+                + 2
+                // PWM
+                + 2
                 // InCap
                 //+ 1
-                // PWM
-                //+ 2
                 // SPI
                 //+ 2
                 // UART
@@ -456,7 +457,6 @@ const UjNativeClass nativeCls_UC =
 				natUc_SetDigitalOutLevel,
 				JAVA_ACC_PUBLIC | JAVA_ACC_NATIVE | JAVA_ACC_STATIC                  
                         }
-#if 0
                         // ADC
                         ,{
                             //void ADCSetScan(int pin, int enable);
@@ -489,6 +489,22 @@ const UjNativeClass nativeCls_UC =
 				natUc_I2CWriteRead,
 				JAVA_ACC_PUBLIC | JAVA_ACC_NATIVE | JAVA_ACC_STATIC
                         }
+                        // PWM
+                        ,{
+                                // void SetPwmDutyCycle(int pwm_num, int dc, int fraction);
+				"SetPwmDutyCycle()",
+				"(III)V",
+				natUc_SetPwmDutyCycle,
+				JAVA_ACC_PUBLIC | JAVA_ACC_NATIVE | JAVA_ACC_STATIC
+                        }
+                        ,{
+                                // void SetPwmPeriod(int pwm_num, int period, int scale);
+				"SetPwmPeriod()",
+				"(III)V",
+				natUc_SetPwmPeriod,
+				JAVA_ACC_PUBLIC | JAVA_ACC_NATIVE | JAVA_ACC_STATIC
+                        }
+#if 0
                         // InCap
                         ,{
                                 // mode:
@@ -508,21 +524,6 @@ const UjNativeClass nativeCls_UC =
 				"InCapConfig()",
 				"(IIII)V",
 				natUc_InCapConfig,
-				JAVA_ACC_PUBLIC | JAVA_ACC_NATIVE | JAVA_ACC_STATIC
-                        }
-                        // PWM
-                        ,{
-                                // void SetPwmDutyCycle(int pwm_num, int dc, int fraction);
-				"SetPwmDutyCycle()",
-				"(III)V",
-				natUc_SetPwmDutyCycle,
-				JAVA_ACC_PUBLIC | JAVA_ACC_NATIVE | JAVA_ACC_STATIC
-                        }
-                        ,{
-                                // void SetPwmPeriod(int pwm_num, int period, int scale);
-				"SetPwmPeriod()",
-				"(III)V",
-				natUc_SetPwmPeriod,
 				JAVA_ACC_PUBLIC | JAVA_ACC_NATIVE | JAVA_ACC_STATIC
                         }
                         // SPI
