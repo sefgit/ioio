@@ -153,17 +153,20 @@ class IncomingState implements IncomingHandler {
 
 		void errorReceived(byte[] data, int size) {
 			assert (currentOpen_);
-			listeners_.peek().errorReceived(data, size);
+			// TODO
+			//listeners_.peek().errorReceived(data, size);
 		}
 
 		void outputReceived(byte[] data, int size) {
 			assert (currentOpen_);
-			listeners_.peek().outputReceived(data, size);
+			// TODO
+			//listeners_.peek().outputReceived(data, size);
 		}
 		
 		public void initResult(boolean result) {
 			assert (currentOpen_);
-			listeners_.peek().initResult(result);
+			// TODO:
+			//listeners_.peek().initResult(result);
 		}
 	}
 
