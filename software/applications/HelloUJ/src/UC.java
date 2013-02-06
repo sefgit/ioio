@@ -14,6 +14,7 @@ public class UC{
 	public static int input(int maxsize, byte[] data) {return 0;};
 	public static void output(int maxsize, byte[] data) {};
 	public static void error(int maxsize, byte[] data) {};
+*/	
     // ADC
 	public static void ADCSetScan(int pin, int enable) {};
 	public static void ADCClrScan(int pin) {};
@@ -21,6 +22,7 @@ public class UC{
     // rate is 0:off 1:100KHz, 2:400KHz, 3:1MHz
 	public static void I2CConfigMaster(int i2c_num, int rate, int smbus_levels) {};
 	public static void I2CWriteRead(int i2c_num, int addr, byte[] data, int write_bytes, int read_bytes) {};
+/*	
     // InCap
             // mode:
             //   0: off
@@ -36,9 +38,11 @@ public class UC{
             //   2: 250KHz
             //   3: 62.5KHz
 	public static void InCapConfig(int incap_num, int double_prec, int mode, int clock) {};
+*/	
     // PWM
 	public static void SetPwmDutyCycle(int pwm_num, int dc, int fraction) {};
 	public static void SetPwmPeriod(int pwm_num, int period, int scale) {};
+/*	
     // SPI
 	public static void SPIConfigMaster(int spi_num, int scale, int div, int smp_end, int clk_edge, int clk_pol) {};
 	public static void SPITransmit(int spi_num, int dest, byte[] data, int data_size, int total_size, int trim_rx) {};

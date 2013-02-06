@@ -6,9 +6,11 @@ public class A {
 		// TODO Auto-generated method stub
 		while(true) {
 			UC.toggleLED(1);
-			UC.msDelay(1000);
+			for(int i=1000;i>0;--i)
+				UC.msDelay(1);
 			UC.toggleLED(0);
-			UC.msDelay(1000);
+			for(int i=1000;i>0;--i)
+				UC.msDelay(1);
 		}
 
 	}
